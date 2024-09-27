@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MutantTrivia")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+248be2102abae228ae51e0866b6e89af56c5f5d2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+516dc1bf746f58bb280451b337c25fac7a7dc5ae")]
 [assembly: System.Reflection.AssemblyProductAttribute("MutantTrivia")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MutantTrivia")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,0 +1,22 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<h1>Trivia Questions</h1>
+<p>
+    <a asp-controller="Questions" asp-action="Add">Add Question</a>
+</p>
+
+@if(ViewBag.questions.Count == 0)
+{
+    <p>No Questions Yet!</p>
+}
+
+<ul>
+    @foreach(string q in ViewBag.questions)
+    {
+        <li>@q</li>
+    }
+</ul>

@@ -15,10 +15,12 @@
            Name
            <input asp-for="Name" type="text" />
        </label>
+        <span asp-validation-for="Name" class="text-danger"></span>
        <label asp-for="Answer">
            Answer
            <input type="text" asp-for="Answer" />
        </label>
+        <span asp-validation-for="Answer" class="text-danger"></span>
     </div>
     
     <input type="submit" value="Add Question" />

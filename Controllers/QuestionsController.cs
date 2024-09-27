@@ -25,14 +25,18 @@ namespace MutantTrivia.Controllers
         [HttpPost]
         public IActionResult Add(AddQuestionViewModel addQuestionViewModel)
         {
-            Question newQuestion = new Question
+            if (ModelState.IsValid)
             {
-                Name = addQuestionViewModel.Name,
-                Answer = addQuestionViewModel.Answer,
-            };
-            QuestionData.Add(newQuestion);
+                Question newQuestion = new Question
+                {
+                    Name = addQuestionViewModel.Name,
+                    Answer = addQuestionViewModel.Answer,
+                };
+                QuestionData.Add(newQuestion);
 
-            return Redirect("/Questions");
+                return Redirect("/Questions");
+            }
+            return View(addQuestionViewModel);
         }
 
         [HttpGet]

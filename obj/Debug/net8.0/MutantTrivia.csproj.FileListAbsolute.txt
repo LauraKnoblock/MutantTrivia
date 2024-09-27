@@ -28,3 +28,4 @@ C:\Users\laura\source\repos\MutantTrivia\obj\Debug\net8.0\refint\MutantTrivia.dl
 C:\Users\laura\source\repos\MutantTrivia\obj\Debug\net8.0\MutantTrivia.pdb
 C:\Users\laura\source\repos\MutantTrivia\obj\Debug\net8.0\MutantTrivia.genruntimeconfig.cache
 C:\Users\laura\source\repos\MutantTrivia\obj\Debug\net8.0\ref\MutantTrivia.dll
+C:\Users\laura\source\repos\MutantTrivia\obj\Debug\net8.0\MutantTrivia.sourcelink.json

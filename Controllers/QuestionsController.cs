@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MutantTrivia.Data;
+using MutantTrivia.Models;
 
 namespace MutantTrivia.Controllers
 {
     public class QuestionsController : Controller
     {
-       private static List<string> Questions = new List<string>();
 
         public IActionResult Index()
         {
 
-            ViewBag.questions = Questions;
+            ViewBag.questions = QuestionData.GetAll();
             return View();
         }
 
@@ -21,9 +22,29 @@ namespace MutantTrivia.Controllers
 
         [HttpPost]
         [Route("Questions/Add")]
-        public IActionResult NewQuestion(string name)
+        public IActionResult NewQuestion(Question newQuestion)
         {
-            Questions.Add(name);
+            QuestionData.Add(newQuestion);
+
+            return Redirect("/Questions");
+        }
+
+        [HttpGet]
+        public IActionResult Delete()
+        {
+            ViewBag.questions = QuestionData.GetAll();
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Delete(int[] questionIds)
+        {
+            foreach (int questionId in questionIds)
+            {
+                QuestionData.Remove(questionId);
+            }
+
             return Redirect("/Questions");
         }
     }

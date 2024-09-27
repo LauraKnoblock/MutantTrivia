@@ -1,0 +1,22 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<h1>Delete Question</h1>
+
+<form method="post">
+    @foreach(var q in ViewBag.questions)
+    {
+        <div class="form-group">
+            <label>
+                <span>@q.Name</span>
+                <input type="checkbox" name="questionIds" value="@q.Id" />
+            </label>
+
+        </div>
+    }
+
+    <input type="submit" value="Delete Selected Questions" class="btn btn-danger" />
+</form>

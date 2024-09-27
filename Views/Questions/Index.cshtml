@@ -13,10 +13,28 @@
 {
     <p>No Questions Yet!</p>
 }
-
-<ul>
-    @foreach(string q in ViewBag.questions)
-    {
-        <li>@q</li>
-    }
-</ul>
+else
+{
+    <table class="table">
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Answer
+            </th>
+            
+        </tr>
+        @foreach (var q in ViewBag.questions)
+        {
+            <tr>
+                <td>@q.Id</td>
+                <td>@q.Name</td>
+                <td>@q.Answer</td>
+            </tr>
+        }
+    </table>
+}

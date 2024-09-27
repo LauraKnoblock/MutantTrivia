@@ -2,8 +2,8 @@
 {
     public class Question
     {
-        public string Name { get; set; }
-        public string Answer { get; set; }
+        public string? Name { get; set; }
+        public string? Answer { get; set; }
 
         public int Id { get; set; }
         static private int nextId = 1;

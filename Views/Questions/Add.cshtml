@@ -3,18 +3,21 @@
 *@
 @{
 }
+@using MutantTrivia.ViewModels
+@model AddQuestionViewModel
+
 
 <h1>Add a Questions</h1>
 
-<form method="post">
+<form method="post" asp-controller="Questions" asp-action="Add">
     <div class="form-group">
-       <label>
+       <label asp-for="Name">
            Name
-           <input type="text" name="name" />
+           <input asp-for="Name" type="text" />
        </label>
-       <label>
+       <label asp-for="Answer">
            Answer
-           <input type="text" name="answer" />
+           <input type="text" asp-for="Answer" />
        </label>
     </div>
     

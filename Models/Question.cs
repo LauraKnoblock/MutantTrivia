@@ -8,6 +8,8 @@
         public int Id { get; set; }
         static private int nextId = 1;
 
+        public QuestionType Type { get; set; }
+
         public Question()
         {
             Id = nextId;

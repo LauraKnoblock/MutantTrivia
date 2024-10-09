@@ -31,6 +31,7 @@ namespace MutantTrivia.Controllers
                 {
                     Name = addQuestionViewModel.Name,
                     Answer = addQuestionViewModel.Answer,
+                    Type = addQuestionViewModel.Type
                 };
                 QuestionData.Add(newQuestion);
 

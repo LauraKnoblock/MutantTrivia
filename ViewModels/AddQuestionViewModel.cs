@@ -16,18 +16,24 @@ namespace MutantTrivia.ViewModels
 
         public QuestionType Type { get; set; }
 
-        public List<SelectListItem> QuestionTypes { get; set; } = new List<SelectListItem>
-   {
-      new SelectListItem(QuestionType.History.ToString(), ((int)QuestionType.History).ToString()),
-      new SelectListItem(QuestionType.Literature.ToString(), ((int)QuestionType.Literature).ToString()),
-      new SelectListItem(QuestionType.Geography.ToString(), ((int)QuestionType.Geography).ToString()),
-      new SelectListItem(QuestionType.Arts.ToString(), ((int)QuestionType.Arts).ToString()),
-      new SelectListItem(QuestionType.Sports.ToString(), ((int)QuestionType.Sports).ToString()),
-      new SelectListItem(QuestionType.Science.ToString(), ((int)QuestionType.Science).ToString()),
+        [Required(ErrorMessage = "Category is required")]
+        public int CategoryId { get; set; }
+        public List<SelectListItem>? Categories { get; set; }
 
+        public AddQuestionViewModel(List<QuestionCategory> categories)
+        {
+            Categories = new List<SelectListItem>();
 
+            foreach (var category in categories)
+            {
+                Categories.Add(new SelectListItem
+                {
+                    Value = category.Id.ToString(),
+                    Text = category.Name
+                });
+            }
+        }
 
-
-    };
+        public AddQuestionViewModel() { }   
     }
 }

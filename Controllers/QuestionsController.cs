@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MutantTrivia.Data;
 using MutantTrivia.Models;
 using MutantTrivia.ViewModels;
@@ -20,14 +21,18 @@ namespace MutantTrivia.Controllers
         public IActionResult Index()
         {
 
-            List<Question> questions = context.Questions.ToList();
+            List<Question> questions = context.Questions
+                .Include(q => q.Category)
+                .ToList();
+
             return View(questions);
         }
 
         [HttpGet]
         public IActionResult Add()
         {
-            AddQuestionViewModel addQuestionViewModel = new AddQuestionViewModel();
+            List<QuestionCategory> categories = context.Categories.ToList();
+            AddQuestionViewModel addQuestionViewModel = new AddQuestionViewModel(categories);
             return View(addQuestionViewModel);
         }
 
@@ -36,11 +41,13 @@ namespace MutantTrivia.Controllers
         {
             if (ModelState.IsValid)
             {
+                QuestionCategory theCategory = 
+             context.Categories.Find(addQuestionViewModel.CategoryId);
                 Question newQuestion = new Question
                 {
                     Name = addQuestionViewModel.Name,
                     Answer = addQuestionViewModel.Answer,
-                    Type = addQuestionViewModel.Type
+                    Category = theCategory
                 };
                 context.Questions.Add(newQuestion);
                 context.SaveChanges();

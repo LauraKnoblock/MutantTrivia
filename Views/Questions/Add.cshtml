@@ -11,8 +11,8 @@
 
 <form method="post" asp-controller="Questions" asp-action="Add">
     <div class="form-group">
-        <label asp-for="Type">Question Category</label>
-        <select asp-for="Type" asp-items="Model.QuestionTypes"></select>
+        <label asp-for="CategoryId">Question Category</label>
+        <select asp-for="CategoryId" asp-items="Model.Categories"></select>
     </div>
     <div class="form-group">
        <label asp-for="Name">

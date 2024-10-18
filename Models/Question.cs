@@ -7,7 +7,9 @@
 
         public int Id { get; set; }
 
-        public QuestionType Type { get; set; }
+        public QuestionCategory Category { get; set; }
+
+        public int CategoryId { get; set; }
 
         public Question()
         {

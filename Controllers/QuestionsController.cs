@@ -18,14 +18,16 @@ namespace MutantTrivia.Controllers
             context = dbContext;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int? categoryId)
         {
+            IQueryable<Question> questions = context.Questions.Include(q => q.Category);
 
-            List<Question> questions = context.Questions
-                .Include(q => q.Category)
-                .ToList();
+            if (categoryId.HasValue)
+            {
+                questions = questions.Where(q => q.CategoryId == categoryId.Value);
+            }~
 
-            return View(questions);
+            return View(questions.ToList());
         }
 
         [HttpGet]

@@ -1,0 +1,19 @@
+﻿body {
+    background-color: tomato;
+    color: ghostwhite;
+    font-family: "Cedarville Cursive", cursive; /* Optional: Set a default font */
+}
+
+/* Additional styles (optional) */
+.cedarville-cursive-regular {
+    font-family: "Cedarville Cursive", cursive;
+    font-weight: 400;
+    font-style: normal;
+}
+.navbar-brand { /* Target navbar brand for potentially different color */
+    color: ghostwhite;
+}
+
+a { /* Target all links for potentially different color */
+    color: ghostwhite;
+}

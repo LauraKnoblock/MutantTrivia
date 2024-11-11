@@ -18,17 +18,36 @@ namespace MutantTrivia.Controllers
             context = dbContext;
         }
 
-        public IActionResult Index(int? categoryId)
+        public IActionResult Index(QuestionSearchViewModel searchModel)
         {
-            IQueryable<Question> questions = context.Questions.Include(q => q.Category);
+            var questions = context.Questions.AsQueryable();
 
-            if (categoryId.HasValue)
+            if (!string.IsNullOrEmpty(searchModel.Name))
             {
-                questions = questions.Where(q => q.CategoryId == categoryId.Value);
-            }~
+                questions = questions.Where(q => q.Name.Contains(searchModel.Name));
+            }
 
-            return View(questions.ToList());
+            if (!string.IsNullOrEmpty(searchModel.Answer))
+            {
+                questions = questions.Where(q => q.Answer.Contains(searchModel.Answer));
+            }
+
+            if (searchModel.CategoryId.HasValue)
+            {
+                questions = questions.Where(q => q.CategoryId == searchModel.CategoryId.Value);
+            }
+
+            var viewModel = new QuestionListViewModel
+            {
+                SearchModel = searchModel,
+                Questions = questions.ToList()
+            };
+
+            ViewBag.Categories = context.Categories.ToList();
+
+            return View(viewModel);
         }
+
 
         [HttpGet]
         public IActionResult Add()

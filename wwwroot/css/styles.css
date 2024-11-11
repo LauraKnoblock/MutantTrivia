@@ -11,6 +11,10 @@
     font-style: normal;
 }
 
+.navbar-brand {
+    color: tomato !important;
+}
+
 a {
     color: ghostwhite;
     text-decoration: none; /* Optional: Remove underline for links */
@@ -19,4 +23,14 @@ a {
     a:hover {
         color: black;
     }
+.nav-link {
+    color: black;
+}
+/* Add this to ensure the .nav-item links are styled correctly */
+ .nav-link:hover {
+        color: tomato;
+    }
 
+ h3 {
+     color: black;
+ }

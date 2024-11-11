@@ -5,6 +5,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDistributedMemoryCache(); // Adds a memory cache for session
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout (optional)
+    options.Cookie.HttpOnly = true;  // Make the cookie HTTP only (recommended)
+});
 
 
 var connectionString = "server=localhost;user=triviamutant;password=TriviaMutant;database=trivia-questions";
@@ -24,6 +30,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseSession();
 
 app.UseRouting();
 

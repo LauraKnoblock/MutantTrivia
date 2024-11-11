@@ -1,0 +1,28 @@
+﻿@model QuizViewModel
+@Html.HiddenFor(m => m.CorrectAnswersCount)
+@Html.HiddenFor(m => m.TotalQuestions)
+
+
+<h1>Quiz Yourself</h1>
+
+<!-- Show how many questions have been answered correctly out of total questions -->
+<p>You have answered @Model.CorrectAnswersCount out of @Model.TotalQuestions correctly!</p>
+
+<form method="post">
+    <h3>@Model.QuestionText</h3>
+    <input type="text" name="UserAnswer" placeholder="Enter your answer" />
+    <button type="submit">Submit Answer</button>
+</form>
+
+@if (Model.IsCorrect)
+{
+    <p>Your answer is @(Model.IsCorrect ? "correct" : "incorrect").</p>
+    <p>The correct answer was: @Model.CorrectAnswer</p>
+}
+
+@if (TempData["QuizComplete"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["QuizComplete"]
+    </div>
+}

@@ -1,5 +1,8 @@
 ﻿@model MutantTrivia.ViewModels.QuestionListViewModel
 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" rel="stylesheet" integrity="sha512-XOcwYbRmzwOsrZxpETnpY9AfnE0RtpEZCWJmclo2pLqYW+YiaQH8vtyzZjBBvZOO6fUXJLzp3wX54MVy6jQzPQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
 <h1>Trivia Questions</h1>
 
 <form asp-controller="Questions" asp-action="Index" method="get">
@@ -20,6 +23,9 @@
 <p>
     <a asp-controller="Questions" asp-action="Add">Add Question</a>
 </p>
+<p>
+    <a asp-controller="Questions" asp-action="Delete">Delete Question</a>
+</p>
 
 @if (Model.Questions.Count == 0)
 {
@@ -39,6 +45,10 @@ else
                 <td>@q.Category?.Name</td>
                 <td>@q.Name</td>
                 <td>@q.Answer</td>
+                <td><a asp-controller="Questions" asp-action="Edit" asp-route-id="@q.Id">
+                    <i class="bi bi-pencil text-primary fs-4"></i>
+                </a>
+                </td>
             </tr>
         }
     </table>

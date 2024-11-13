@@ -101,13 +101,61 @@ namespace MutantTrivia.Controllers
             return Redirect("/Questions");
         }
 
-      public IActionResult Quiz()
+        public IActionResult Edit(int id)
+        {
+            var question = context.Questions.Find(id);
+            if (question == null)
+            {
+                return NotFound();
+            }
+
+            var editViewModel = new EditQuestionViewModel
+            {
+                Id = question.Id,
+                Name = question.Name,
+                Answer = question.Answer,
+                CategoryId = question.CategoryId
+            };
+
+            ViewBag.Categories = context.Categories.ToList();
+            return View(editViewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(EditQuestionViewModel editQuestionViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var question = context.Questions.Find(editQuestionViewModel.Id);
+                if (question == null)
+                {
+                    return NotFound();
+                }
+
+                question.Name = editQuestionViewModel.Name;
+                question.Answer = editQuestionViewModel.Answer;
+                question.CategoryId = editQuestionViewModel.CategoryId;
+
+                context.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.Categories = context.Categories.ToList();
+            return View(editQuestionViewModel);
+        }
+
+        public IActionResult Quiz()
         {
             // Get the total number of questions in the database
             var totalQuestions = context.Questions.Count();
 
             // Initialize the correct answers count from the session or default to 0
             int correctAnswersCount = HttpContext.Session.GetInt32("CorrectAnswersCount") ?? 0;
+            Console.WriteLine($"Session ID: {HttpContext.Session.Id}");
+            Console.WriteLine($"Initial Correct Answers Count: {HttpContext.Session.GetInt32("CorrectAnswersCount") ?? 0}");
+
+
 
             // Get a random question from the database
             var allQuestions = context.Questions.ToList();
@@ -126,9 +174,11 @@ namespace MutantTrivia.Controllers
                 QuestionText = randomQuestion.Name,
                 CorrectAnswersCount = correctAnswersCount,
                 TotalQuestions = totalQuestions
+
             };
 
             HttpContext.Session.SetInt32("CorrectAnswersCount", correctAnswersCount);
+            Console.WriteLine($"Correct Answers Count assigned to Model: {quizModel.CorrectAnswersCount}");
 
 
             return View(quizModel);
@@ -137,6 +187,8 @@ namespace MutantTrivia.Controllers
         [HttpPost]
         public IActionResult Quiz(QuizViewModel model)
         {
+            Console.WriteLine($"Correct Answers Count from Form: {model.CorrectAnswersCount}");
+
             var question = context.Questions.FirstOrDefault(q => q.Id == model.QuestionId);
             if (question == null)
             {
@@ -155,6 +207,8 @@ namespace MutantTrivia.Controllers
 
             // Display the result
             model.CorrectAnswer = question.Answer;
+            Console.WriteLine($"Question: {question.Name}");
+
 
             // If the user has answered 10 questions correctly, show a success message
             if (model.CorrectAnswersCount == 10)

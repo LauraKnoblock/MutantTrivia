@@ -7,4 +7,6 @@
     public int CorrectAnswersCount { get; set; }
     public int TotalQuestions { get; set; }
     public string CorrectAnswer { get; set; }
+
+   
 }

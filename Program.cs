@@ -8,8 +8,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDistributedMemoryCache(); // Adds a memory cache for session
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout (optional)
-    options.Cookie.HttpOnly = true;  // Make the cookie HTTP only (recommended)
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
 

@@ -1,28 +1,31 @@
 ﻿@model QuizViewModel
-@Html.HiddenFor(m => m.CorrectAnswersCount)
-@Html.HiddenFor(m => m.TotalQuestions)
-
-
 <h1>Quiz Yourself</h1>
+<p>@Model?.CorrectAnswersCount out of @Model?.TotalQuestionsCount Answered</p>
 
-<!-- Show how many questions have been answered correctly out of total questions -->
-<p>You have answered @Model.CorrectAnswersCount out of @Model.TotalQuestions correctly!</p>
-
-<form method="post">
-    <h3>@Model.QuestionText</h3>
-    <input type="text" name="UserAnswer" placeholder="Enter your answer" />
-    <button type="submit">Submit Answer</button>
-</form>
-
-@if (Model.IsCorrect)
+@if (!string.IsNullOrEmpty(Model?.FeedbackMessage))
 {
-    <p>Your answer is @(Model.IsCorrect ? "correct" : "incorrect").</p>
-    <p>The correct answer was: @Model.CorrectAnswer</p>
+    <p>@Model.FeedbackMessage</p>
 }
 
-@if (TempData["QuizComplete"] != null)
+@if (!Model.IsComplete)
 {
-    <div class="alert alert-success">
-        @TempData["QuizComplete"]
+    <form asp-action="Quiz" method="post">
+        <input type="hidden" asp-for="TotalQuestionsCount" value="@Model.TotalQuestionsCount" />
+        <input type="hidden" asp-for="QuestionId" value="@Model.Question.Id" />
+        <div>
+            @Model?.Question?.Name
+        </div>
+        <div>
+            <input asp-for="UserAnswer" />
+        </div>
+        <button type="submit">Submit Answer</button>
+    </form>
+}
+else
+{
+    <div>
+        <h2>Quiz Complete!</h2>
+        <p>You got @Model.CorrectAnswersCount out of @Model.TotalQuestionsCount questions correct!</p>
+        <a asp-action="Quiz" class="btn btn-primary">Start New Quiz</a>
     </div>
 }

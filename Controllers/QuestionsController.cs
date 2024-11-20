@@ -147,47 +147,33 @@ namespace MutantTrivia.Controllers
 
         public IActionResult Quiz()
         {
-            // Get the total number of questions in the database
             var totalQuestions = context.Questions.Count();
-
-            // Initialize the correct answers count from the session or default to 0
-            int correctAnswersCount = HttpContext.Session.GetInt32("CorrectAnswersCount") ?? 0;
-            Console.WriteLine($"Session ID: {HttpContext.Session.Id}");
-            Console.WriteLine($"Initial Correct Answers Count: {HttpContext.Session.GetInt32("CorrectAnswersCount") ?? 0}");
-
-
-
-            // Get a random question from the database
-            var allQuestions = context.Questions.ToList();
-            var randomIndex = new Random().Next(allQuestions.Count);
-            var randomQuestion = allQuestions[randomIndex];
-
-            if (randomQuestion == null)
+            if (totalQuestions == 0)
             {
-                // Handle case where no questions exist
+                TempData["Error"] = "No questions available.";
                 return RedirectToAction("Index");
             }
 
-            var quizModel = new QuizViewModel
-            {
-                QuestionId = randomQuestion.Id,
-                QuestionText = randomQuestion.Name,
-                CorrectAnswersCount = correctAnswersCount,
-                TotalQuestions = totalQuestions
+            // Reset session for a new quiz
+            HttpContext.Session.SetInt32("CorrectAnswersCount", 0);
+            HttpContext.Session.Remove("AnsweredQuestionIds");
 
+            var model = new QuizViewModel
+            {
+                TotalQuestionsCount = totalQuestions,
+                Question = context.Questions.OrderBy(q => Guid.NewGuid()).FirstOrDefault()
             };
 
-            HttpContext.Session.SetInt32("CorrectAnswersCount", correctAnswersCount);
-            Console.WriteLine($"Correct Answers Count assigned to Model: {quizModel.CorrectAnswersCount}");
-
-
-            return View(quizModel);
+            return View(model);
         }
 
         [HttpPost]
         public IActionResult Quiz(QuizViewModel model)
         {
-            Console.WriteLine($"Correct Answers Count from Form: {model.CorrectAnswersCount}");
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
             var question = context.Questions.FirstOrDefault(q => q.Id == model.QuestionId);
             if (question == null)
@@ -196,31 +182,58 @@ namespace MutantTrivia.Controllers
                 return View(model);
             }
 
-            // Check if the user's answer matches the correct answer
-            model.IsCorrect = string.Equals(model.UserAnswer, question.Answer, StringComparison.OrdinalIgnoreCase);
+            // Answer checking logic
+            var isCorrect = string.Equals(model.UserAnswer?.Trim(), question.Answer?.Trim(), StringComparison.OrdinalIgnoreCase);
 
-            // Update correct answers count if correct
-            if (model.IsCorrect)
+            // Update correct answers count
+            var currentCorrectAnswersCount = HttpContext.Session.GetInt32("CorrectAnswersCount") ?? 0;
+            if (isCorrect)
             {
-                model.CorrectAnswersCount++;
+                currentCorrectAnswersCount++;
+                HttpContext.Session.SetInt32("CorrectAnswersCount", currentCorrectAnswersCount);
             }
 
-            // Display the result
-            model.CorrectAnswer = question.Answer;
-            Console.WriteLine($"Question: {question.Name}");
+            // Get previously answered question IDs
+            var answeredIds = HttpContext.Session.GetString("AnsweredQuestionIds")?.Split(',')
+                .Select(int.Parse).ToList() ?? new List<int>();
 
+            answeredIds.Add(model.QuestionId);
+            HttpContext.Session.SetString("AnsweredQuestionIds", string.Join(",", answeredIds));
 
-            // If the user has answered 10 questions correctly, show a success message
-            if (model.CorrectAnswersCount == 10)
+            // Check if quiz is complete (all questions answered)
+            if (currentCorrectAnswersCount == model.TotalQuestionsCount ||
+          answeredIds.Count == model.TotalQuestionsCount)
             {
-                TempData["QuizComplete"] = "Congratulations! You have answered 10 questions correctly!";
+                model.IsComplete = true;  // Add this property to QuizViewModel
+                model.FeedbackMessage = "Congratulations! You've completed the quiz!";
+                return View(model);
             }
 
-            HttpContext.Session.SetInt32("CorrectAnswersCount", model.CorrectAnswersCount);
+            // Get next question
+            var nextQuestion = context.Questions
+                .Where(q => !answeredIds.Contains(q.Id))
+                .OrderBy(q => Guid.NewGuid())
+                .FirstOrDefault();
 
+            // If no next question (shouldn't happen, but just in case)
+            if (nextQuestion == null)
+            {
+                TempData["QuizComplete"] = "Congratulations! You've answered all questions!";
+                return RedirectToAction("Index");
+            }
+
+            // Prepare model for next question
+            model = new QuizViewModel
+            {
+                TotalQuestionsCount = model.TotalQuestionsCount,
+                CorrectAnswersCount = currentCorrectAnswersCount,
+                Question = nextQuestion,
+                FeedbackMessage = isCorrect ? "CORRECT!" : "Incorrect."
+            };
 
             return View(model);
         }
+
 
 
     }

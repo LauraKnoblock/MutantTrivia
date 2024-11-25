@@ -4,6 +4,10 @@
 
 
 <h1>Trivia Questions</h1>
+<div class="addDeleteQuestion">
+    <form asp-controller="Questions" asp-action="Add"><button type="submit" class="btn btn-primary">Add a Question</button></form>
+    <form asp-controller="Questions" asp-action="Delete"><button type="submit" class="btn btn-primary">Delete a Question</form>
+</div>
 
 <form asp-controller="Questions" asp-action="Index" method="get">
     <input type="text" asp-for="SearchModel.Name" placeholder="Search by Name" />
@@ -17,15 +21,11 @@
         }
     </select>
 
-    <button type="submit">Search</button>
+    <button type="submit" class="btn btn-primary">Search</button>
 </form>
 
-<p>
-    <a asp-controller="Questions" asp-action="Add">Add Question</a>
-</p>
-<p>
-    <a asp-controller="Questions" asp-action="Delete">Delete Question</a>
-</p>
+
+
 
 @if (Model.Questions.Count == 0)
 {
@@ -33,10 +33,14 @@
 }
 else
 {
+    <p class="questionCount">
+        Showing <strong>@Model.VisibleQuestions</strong> questions out of
+        <strong>@Model.TotalQuestions</strong> total questions.
+    </p>
     <table class="table">
         <tr>
             <th>Category</th>
-            <th>Name</th>
+            <th>Question</th>
             <th>Answer</th>
         </tr>
         @foreach (var q in Model.Questions)
@@ -46,7 +50,7 @@ else
                 <td>@q.Name</td>
                 <td>@q.Answer</td>
                 <td><a asp-controller="Questions" asp-action="Edit" asp-route-id="@q.Id">
-                    <i class="bi bi-pencil text-primary fs-4"></i>
+                    <i class="bi bi-pencil text-success fs-3"></i>
                 </a>
                 </td>
             </tr>

@@ -20,8 +20,13 @@ namespace MutantTrivia.Controllers
 
         public IActionResult Index(QuestionSearchViewModel searchModel)
         {
+            // Queryable to build the query step-by-step
             var questions = context.Questions.AsQueryable();
 
+            // Total count of all questions
+            int totalQuestions = questions.Count();
+
+            // Apply filters
             if (!string.IsNullOrEmpty(searchModel.Name))
             {
                 questions = questions.Where(q => q.Name.Contains(searchModel.Name));
@@ -37,12 +42,19 @@ namespace MutantTrivia.Controllers
                 questions = questions.Where(q => q.CategoryId == searchModel.CategoryId.Value);
             }
 
+            // Count after filtering
+            int visibleQuestions = questions.Count();
+
+            // Build the view model
             var viewModel = new QuestionListViewModel
             {
                 SearchModel = searchModel,
-                Questions = questions.ToList()
+                Questions = questions.ToList(),
+                TotalQuestions = totalQuestions, // Pass total count
+                VisibleQuestions = visibleQuestions // Pass filtered count
             };
 
+            // Populate categories for the dropdown
             ViewBag.Categories = context.Categories.ToList();
 
             return View(viewModel);
@@ -147,6 +159,7 @@ namespace MutantTrivia.Controllers
 
         public IActionResult Quiz()
         {
+
             var totalQuestions = context.Questions.Count();
             if (totalQuestions == 0)
             {
@@ -247,6 +260,8 @@ namespace MutantTrivia.Controllers
             var random = new Random();
             var randomIndex = random.Next(0, remainingQuestions.Count);
             var nextQuestion = remainingQuestions[randomIndex];
+
+            model.UserAnswer = string.Empty;
 
             model = new QuizViewModel
             {

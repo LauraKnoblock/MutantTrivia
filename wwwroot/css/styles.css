@@ -17,20 +17,76 @@
 
 a {
     color: ghostwhite;
-    text-decoration: none; /* Optional: Remove underline for links */
+    text-decoration: none;
 }
 
     a:hover {
         color: black;
+        -webkit-transform: scale(1.2);
     }
-.nav-link {
-    color: black;
-}
-/* Add this to ensure the .nav-item links are styled correctly */
- .nav-link:hover {
-        color: tomato;
-    }
+
 
  h3 {
      color: black;
  }
+
+ tr:hover {
+     color: ghostwhite;
+ }
+
+.questionCount {
+    font-size: 1.25rem;
+    margin-top: 1rem;
+}
+
+
+.nav-link:hover {
+    -webkit-transform: scale(1.2);
+    color:tomato !important;
+}
+
+.title-word {
+    animation: color-animation 4s linear infinite;
+}
+
+.title-word-1 {
+    --color-1: #3f61ff;
+    --color-2: #fbfc09;
+    --color-3: ghostwhite;
+}
+
+.title-word-2 {
+    --color-1: #8cfe48;
+    --color-2: #6dfd17;
+    --color-3: #55e301;
+}
+
+@keyframes color-animation {
+    0% {
+        color: var(--color-1)
+    }
+
+    32% {
+        color: var(--color-1)
+    }
+
+    33% {
+        color: var(--color-2)
+    }
+
+    65% {
+        color: var(--color-2)
+    }
+
+    66% {
+        color: var(--color-3)
+    }
+
+    99% {
+        color: var(--color-3)
+    }
+
+    100% {
+        color: var(--color-1)
+    }
+}

@@ -1,8 +1,8 @@
 ﻿@model QuizViewModel
 @if (Model.IsComplete)
 {
-    <div class="completion-container text-center p-4 bg-light rounded shadow-sm">
-        <h2 class="text-success mb-4">🎉 Congratulations! Quiz Complete! 🎉</h2>
+    <div class="completion-container text-center p-4 bg-warning rounded shadow-md">
+        <h2 class="text-primary mb-4">🎉 Congratulations! Quiz Complete! 🎉</h2>
         <div class="score-display mb-4">
             <h3>Final Score</h3>
             <p class="h4">
@@ -33,6 +33,7 @@ else if (Model.Question == null)
                         <option value="@Model.TotalQuestionsCount">All Questions (@Model.TotalQuestionsCount)</option>
                     }
                 </select>
+
             </div>
             <button type="submit" class="btn btn-primary mt-3">Start Quiz</button>
         </form>
@@ -40,6 +41,7 @@ else if (Model.Question == null)
 }
 else
 {
+
     <h1>Quiz Yourself</h1>
     <p>@Model.CorrectAnswersCount out of @Model.SelectedQuestionCount questions answered</p>
     @if (!string.IsNullOrEmpty(Model.FeedbackMessage))
@@ -56,7 +58,7 @@ else
             <h4>@Model.Question.Name</h4>
         </div>
         <div class="mb-3">
-            <input asp-for="UserAnswer" class="form-control" placeholder="Enter your answer" />
+            <input asp-for="UserAnswer" value="" class="form-control" placeholder="Enter your answer" />
         </div>
         <button type="submit" class="btn btn-primary">Submit Answer</button>
     </form>

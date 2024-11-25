@@ -5,7 +5,7 @@
 <form asp-controller="Questions" asp-action="Edit" method="post">
     <input type="hidden" asp-for="Id" />
     <div class="form-group">
-        <label asp-for="Name">Name:</label>
+        <label asp-for="Name">Question:</label>
         <input type="text" class="form-control" asp-for="Name" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>

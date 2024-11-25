@@ -158,10 +158,13 @@ namespace MutantTrivia.Controllers
             HttpContext.Session.SetInt32("CorrectAnswersCount", 0);
             HttpContext.Session.Remove("AnsweredQuestionIds");
 
+            var randomIndex = new Random().Next(totalQuestions); // Random number between 0 and totalQuestions - 1
+            var randomQuestion = context.Questions.Skip(randomIndex).FirstOrDefault();
+
             var model = new QuizViewModel
             {
                 TotalQuestionsCount = totalQuestions,
-                Question = context.Questions.OrderBy(q => Guid.NewGuid()).FirstOrDefault()
+                Question = randomQuestion
             };
 
             return View(model);
@@ -175,6 +178,7 @@ namespace MutantTrivia.Controllers
                 return View(model);
             }
 
+            // Retrieve the current question
             var question = context.Questions.FirstOrDefault(q => q.Id == model.QuestionId);
             if (question == null)
             {
@@ -182,7 +186,7 @@ namespace MutantTrivia.Controllers
                 return View(model);
             }
 
-            // Answer checking logic
+            // Check the user's answer
             var isCorrect = string.Equals(model.UserAnswer?.Trim(), question.Answer?.Trim(), StringComparison.OrdinalIgnoreCase);
 
             // Update correct answers count
@@ -200,39 +204,44 @@ namespace MutantTrivia.Controllers
             answeredIds.Add(model.QuestionId);
             HttpContext.Session.SetString("AnsweredQuestionIds", string.Join(",", answeredIds));
 
-            // Check if quiz is complete (all questions answered)
-            if (currentCorrectAnswersCount == model.TotalQuestionsCount ||
-          answeredIds.Count == model.TotalQuestionsCount)
+            // Check if quiz is complete
+            if (answeredIds.Count == model.TotalQuestionsCount)
             {
-                model.IsComplete = true;  // Add this property to QuizViewModel
+                model.IsComplete = true;
                 model.FeedbackMessage = "Congratulations! You've completed the quiz!";
+                model.CorrectAnswersCount = currentCorrectAnswersCount;
                 return View(model);
             }
 
-            // Get next question
-            var nextQuestion = context.Questions
-                .Where(q => !answeredIds.Contains(q.Id))
-                .OrderBy(q => Guid.NewGuid())
-                .FirstOrDefault();
-
-            // If no next question (shouldn't happen, but just in case)
-            if (nextQuestion == null)
+            // Get a random next question that has not been answered
+            var remainingQuestionsCount = context.Questions.Count() - answeredIds.Count;
+            if (remainingQuestionsCount > 0)
             {
-                TempData["QuizComplete"] = "Congratulations! You've answered all questions!";
-                return RedirectToAction("Index");
+                var randomIndex = new Random().Next(remainingQuestionsCount); // Generate random index
+                var nextQuestion = context.Questions
+                    .Where(q => !answeredIds.Contains(q.Id))
+                    .Skip(randomIndex)
+                    .FirstOrDefault();
+
+                if (nextQuestion != null)
+                {
+                    model = new QuizViewModel
+                    {
+                        TotalQuestionsCount = model.TotalQuestionsCount,
+                        CorrectAnswersCount = currentCorrectAnswersCount,
+                        Question = nextQuestion,
+                        FeedbackMessage = isCorrect ? "CORRECT!" : "Incorrect."
+                    };
+
+                    return View(model);
+                }
             }
 
-            // Prepare model for next question
-            model = new QuizViewModel
-            {
-                TotalQuestionsCount = model.TotalQuestionsCount,
-                CorrectAnswersCount = currentCorrectAnswersCount,
-                Question = nextQuestion,
-                FeedbackMessage = isCorrect ? "CORRECT!" : "Incorrect."
-            };
-
-            return View(model);
+            // Fallback for unexpected cases
+            TempData["QuizComplete"] = "Congratulations! You've answered all questions!";
+            return RedirectToAction("Index");
         }
+
 
 
 

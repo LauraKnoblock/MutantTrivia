@@ -1,6 +1,6 @@
 ﻿@model QuizViewModel
 <h1>Quiz Yourself</h1>
-<p>@Model?.CorrectAnswersCount out of @Model?.TotalQuestionsCount Answered</p>
+<p>You got @Model.CorrectAnswersCount out of @Model.TotalQuestionsCount questions correct!</p>
 
 @if (!string.IsNullOrEmpty(Model?.FeedbackMessage))
 {
@@ -25,7 +25,6 @@ else
 {
     <div>
         <h2>Quiz Complete!</h2>
-        <p>You got @Model.CorrectAnswersCount out of @Model.TotalQuestionsCount questions correct!</p>
         <a asp-action="Quiz" class="btn btn-primary">Start New Quiz</a>
     </div>
 }

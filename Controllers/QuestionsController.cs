@@ -154,20 +154,43 @@ namespace MutantTrivia.Controllers
                 return RedirectToAction("Index");
             }
 
-            // Reset session for a new quiz
+            var model = new QuizViewModel
+            {
+                TotalQuestionsCount = totalQuestions
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult StartQuiz(int selectedQuestionCount)
+        {
+            var totalQuestions = context.Questions.Count();
+
+            // Validate selected count
+            if (selectedQuestionCount <= 0 || selectedQuestionCount > totalQuestions)
+            {
+                selectedQuestionCount = Math.Min(5, totalQuestions);
+            }
+
+            // Reset session
             HttpContext.Session.SetInt32("CorrectAnswersCount", 0);
             HttpContext.Session.Remove("AnsweredQuestionIds");
 
-            var randomIndex = new Random().Next(totalQuestions); // Random number between 0 and totalQuestions - 1
-            var randomQuestion = context.Questions.Skip(randomIndex).FirstOrDefault();
+            var random = new Random();
+            var randomSkip = random.Next(0, totalQuestions);
+            var randomQuestion = context.Questions
+                .Skip(randomSkip)
+                .Take(1)
+                .FirstOrDefault();
 
             var model = new QuizViewModel
             {
                 TotalQuestionsCount = totalQuestions,
+                SelectedQuestionCount = selectedQuestionCount,
                 Question = randomQuestion
             };
 
-            return View(model);
+            return View("Quiz", model);
         }
 
         [HttpPost]
@@ -178,7 +201,6 @@ namespace MutantTrivia.Controllers
                 return View(model);
             }
 
-            // Retrieve the current question
             var question = context.Questions.FirstOrDefault(q => q.Id == model.QuestionId);
             if (question == null)
             {
@@ -186,7 +208,7 @@ namespace MutantTrivia.Controllers
                 return View(model);
             }
 
-            // Check the user's answer
+            // Check answer
             var isCorrect = string.Equals(model.UserAnswer?.Trim(), question.Answer?.Trim(), StringComparison.OrdinalIgnoreCase);
 
             // Update correct answers count
@@ -197,51 +219,47 @@ namespace MutantTrivia.Controllers
                 HttpContext.Session.SetInt32("CorrectAnswersCount", currentCorrectAnswersCount);
             }
 
-            // Get previously answered question IDs
+            // Track answered questions
             var answeredIds = HttpContext.Session.GetString("AnsweredQuestionIds")?.Split(',')
                 .Select(int.Parse).ToList() ?? new List<int>();
-
             answeredIds.Add(model.QuestionId);
             HttpContext.Session.SetString("AnsweredQuestionIds", string.Join(",", answeredIds));
 
             // Check if quiz is complete
-            if (answeredIds.Count == model.TotalQuestionsCount)
+            if (answeredIds.Count >= model.SelectedQuestionCount)
             {
-                model.IsComplete = true;
-                model.FeedbackMessage = "Congratulations! You've completed the quiz!";
-                model.CorrectAnswersCount = currentCorrectAnswersCount;
-                return View(model);
-            }
-
-            // Get a random next question that has not been answered
-            var remainingQuestionsCount = context.Questions.Count() - answeredIds.Count;
-            if (remainingQuestionsCount > 0)
-            {
-                var randomIndex = new Random().Next(remainingQuestionsCount); // Generate random index
-                var nextQuestion = context.Questions
-                    .Where(q => !answeredIds.Contains(q.Id))
-                    .Skip(randomIndex)
-                    .FirstOrDefault();
-
-                if (nextQuestion != null)
+                var completionModel = new QuizViewModel
                 {
-                    model = new QuizViewModel
-                    {
-                        TotalQuestionsCount = model.TotalQuestionsCount,
-                        CorrectAnswersCount = currentCorrectAnswersCount,
-                        Question = nextQuestion,
-                        FeedbackMessage = isCorrect ? "CORRECT!" : "Incorrect."
-                    };
-
-                    return View(model);
-                }
+                    IsComplete = true,
+                    CorrectAnswersCount = currentCorrectAnswersCount,
+                    SelectedQuestionCount = model.SelectedQuestionCount,
+                    TotalQuestionsCount = model.TotalQuestionsCount,
+                    FeedbackMessage = $"Congratulations! You've completed the quiz! You got {currentCorrectAnswersCount} out of {model.SelectedQuestionCount} questions correct!"
+                };
+                return View(completionModel);
             }
 
-            // Fallback for unexpected cases
-            TempData["QuizComplete"] = "Congratulations! You've answered all questions!";
-            return RedirectToAction("Index");
-        }
+            // Get next question
+            var remainingQuestions = context.Questions
+       .Where(q => !answeredIds.Contains(q.Id))
+       .ToList();  // Get list of remaining questions
 
+            var random = new Random();
+            var randomIndex = random.Next(0, remainingQuestions.Count);
+            var nextQuestion = remainingQuestions[randomIndex];
+
+            model = new QuizViewModel
+            {
+                TotalQuestionsCount = model.TotalQuestionsCount,
+                SelectedQuestionCount = model.SelectedQuestionCount,
+                CorrectAnswersCount = currentCorrectAnswersCount,
+                QuestionId = nextQuestion.Id,
+                Question = nextQuestion,
+                FeedbackMessage = isCorrect ? "CORRECT!" : "Incorrect."
+            };
+
+            return View(model);
+        }
 
 
 

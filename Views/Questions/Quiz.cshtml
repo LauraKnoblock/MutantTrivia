@@ -1,30 +1,64 @@
 ﻿@model QuizViewModel
-<h1>Quiz Yourself</h1>
-<p>You got @Model.CorrectAnswersCount out of @Model.TotalQuestionsCount questions correct!</p>
-
-@if (!string.IsNullOrEmpty(Model?.FeedbackMessage))
+@if (Model.IsComplete)
 {
-    <p>@Model.FeedbackMessage</p>
+    <div class="completion-container text-center p-4 bg-light rounded shadow-sm">
+        <h2 class="text-success mb-4">🎉 Congratulations! Quiz Complete! 🎉</h2>
+        <div class="score-display mb-4">
+            <h3>Final Score</h3>
+            <p class="h4">
+                You got <span class="text-success">@Model.CorrectAnswersCount</span> out of
+                <span class="text-primary">@Model.SelectedQuestionCount</span> questions correct!
+            </p>
+            <p class="h5 text-muted">
+                (@(((double)Model.CorrectAnswersCount / Model.SelectedQuestionCount * 100).ToString("F1"))%)
+            </p>
+        </div>
+        <a asp-action="Quiz" class="btn btn-primary btn-lg">Start New Quiz</a>
+    </div>
 }
-
-@if (!Model.IsComplete)
+else if (Model.Question == null)
 {
-    <form asp-action="Quiz" method="post">
-        <input type="hidden" asp-for="TotalQuestionsCount" value="@Model.TotalQuestionsCount" />
-        <input type="hidden" asp-for="QuestionId" value="@Model.Question.Id" />
-        <div>
-            @Model?.Question?.Name
-        </div>
-        <div>
-            <input asp-for="UserAnswer" />
-        </div>
-        <button type="submit">Submit Answer</button>
-    </form>
+    <div class="container mt-5">
+        <h1>Quiz Setup</h1>
+        <form asp-action="StartQuiz" method="post">
+            <div class="form-group">
+                <label>Select number of questions:</label>
+                <select name="selectedQuestionCount" class="form-control">
+                    @for (int i = 5; i <= Math.Min(20, Model.TotalQuestionsCount); i += 5)
+                    {
+                        <option value="@i">@i Questions</option>
+                    }
+                    @if (Model.TotalQuestionsCount > 20)
+                    {
+                        <option value="@Model.TotalQuestionsCount">All Questions (@Model.TotalQuestionsCount)</option>
+                    }
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Start Quiz</button>
+        </form>
+    </div>
 }
 else
 {
-    <div>
-        <h2>Quiz Complete!</h2>
-        <a asp-action="Quiz" class="btn btn-primary">Start New Quiz</a>
-    </div>
+    <h1>Quiz Yourself</h1>
+    <p>@Model.CorrectAnswersCount out of @Model.SelectedQuestionCount questions answered</p>
+    @if (!string.IsNullOrEmpty(Model.FeedbackMessage))
+    {
+        <div class="alert @(Model.FeedbackMessage.Contains("CORRECT") ? "alert-success" : "alert-danger") mb-4">
+            @Model.FeedbackMessage
+        </div>
+    }
+    <form asp-action="Quiz" method="post">
+        <input type="hidden" asp-for="TotalQuestionsCount" value="@Model.TotalQuestionsCount" />
+        <input type="hidden" asp-for="SelectedQuestionCount" value="@Model.SelectedQuestionCount" />
+        <input type="hidden" asp-for="QuestionId" value="@Model.Question.Id" />
+        <div class="mb-3">
+            <h4>@Model.Question.Name</h4>
+        </div>
+        <div class="mb-3">
+            <input asp-for="UserAnswer" class="form-control" placeholder="Enter your answer" />
+        </div>
+        <button type="submit" class="btn btn-primary">Submit Answer</button>
+    </form>
 }
+

@@ -55,9 +55,10 @@ else
         <input type="hidden" asp-for="SelectedQuestionCount" value="@Model.SelectedQuestionCount" />
         <input type="hidden" asp-for="QuestionId" value="@Model.Question.Id" />
         <div class="mb-3">
-            <h4>@Model.Question.Name</h4>
+            <h3>Question @Model.CurrentQuestionNumber of @Model.SelectedQuestionCount</h3>
+            <h2 class="quiz-question">@Model.Question.Name</h2>
         </div>
-        <div class="mb-3">
+        <div class="mb-4">
             <input asp-for="UserAnswer" value="" class="form-control" placeholder="Enter your answer" />
         </div>
         <button type="submit" class="btn btn-primary">Submit Answer</button>

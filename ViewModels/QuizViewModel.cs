@@ -9,6 +9,7 @@ public class QuizViewModel
     public int CorrectAnswersCount { get; set; }
     public int TotalQuestionsCount { get; set; }
     public int SelectedQuestionCount { get; set; }
+    public int CurrentQuestionNumber { get; set; }
     public Question? Question { get; set; }
     public string? FeedbackMessage { get; set; }
     public bool IsComplete { get; set; }

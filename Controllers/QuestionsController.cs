@@ -200,7 +200,8 @@ namespace MutantTrivia.Controllers
             {
                 TotalQuestionsCount = totalQuestions,
                 SelectedQuestionCount = selectedQuestionCount,
-                Question = randomQuestion
+                Question = randomQuestion,
+                CurrentQuestionNumber = 1,
             };
 
             return View("Quiz", model);
@@ -270,6 +271,7 @@ namespace MutantTrivia.Controllers
                 CorrectAnswersCount = currentCorrectAnswersCount,
                 QuestionId = nextQuestion.Id,
                 Question = nextQuestion,
+                CurrentQuestionNumber =  answeredIds.Count + 1,
                 FeedbackMessage = isCorrect ? "CORRECT!" : "Incorrect."
             };
 

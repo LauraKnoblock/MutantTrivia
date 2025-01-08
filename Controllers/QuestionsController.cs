@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MutantTrivia.Data;
 using MutantTrivia.Models;
 using MutantTrivia.ViewModels;
+using FuzzySharp;
 
 namespace MutantTrivia.Controllers
 {

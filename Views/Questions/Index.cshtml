@@ -6,7 +6,7 @@
 <h1>Trivia Questions</h1>
 <div class="addDeleteQuestion">
     <form asp-controller="Questions" asp-action="Add"><button type="submit" class="btn btn-primary">Add a Question</button></form>
-    <form asp-controller="Questions" asp-action="Delete"><button type="submit" class="btn btn-primary">Delete a Question</form>
+    <a asp-controller="Questions" asp-action="Delete"><button  type="submit" class="btn btn-danger">Delete a Question</button></a>
 </div>
 
 <form asp-controller="Questions" asp-action="Index" method="get">
@@ -39,16 +39,16 @@ else
     </p>
     <table class="table">
         <tr>
-            <th>Category</th>
+            <th class="searched-item">Category</th>
             <th>Question</th>
-            <th>Answer</th>
+            <th class="searched-item">Answer</th>
         </tr>
         @foreach (var q in Model.Questions)
         {
             <tr>
-                <td>@q.Category?.Name</td>
+                <td class="searched-item">@q.Category?.Name</td>
                 <td>@q.Name</td>
-                <td>@q.Answer</td>
+                <td class="searched-item">@q.Answer</td>
                 <td><a asp-controller="Questions" asp-action="Edit" asp-route-id="@q.Id">
                     <i class="bi bi-pencil text-success fs-3"></i>
                 </a>

@@ -224,8 +224,9 @@ namespace MutantTrivia.Controllers
             }
 
             // Check answer
-            var isCorrect = string.Equals(model.UserAnswer?.Trim(), question.Answer?.Trim(), StringComparison.OrdinalIgnoreCase);
-
+            // Check answer with FuzzySharp
+            var similarity = Fuzz.PartialRatio(model.UserAnswer?.Trim().ToLower(), question.Answer?.Trim().ToLower());
+            var isCorrect = similarity >= 75;
             // Update correct answers count
             var currentCorrectAnswersCount = HttpContext.Session.GetInt32("CorrectAnswersCount") ?? 0;
             if (isCorrect)
@@ -273,7 +274,7 @@ namespace MutantTrivia.Controllers
                 QuestionId = nextQuestion.Id,
                 Question = nextQuestion,
                 CurrentQuestionNumber =  answeredIds.Count + 1,
-                FeedbackMessage = isCorrect ? "CORRECT!" : "Incorrect."
+                FeedbackMessage = isCorrect ? "CORRECT!" : "Incorrect. The correct answer was " + question.Answer
             };
 
             return View(model);

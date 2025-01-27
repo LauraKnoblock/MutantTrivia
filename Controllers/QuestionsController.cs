@@ -92,7 +92,7 @@ namespace MutantTrivia.Controllers
             return View(addQuestionViewModel);
         }
 
-        [HttpGet]
+      /*  [HttpGet]
         public IActionResult Delete()
         {
             ViewBag.questions = context.Questions.ToList();
@@ -112,7 +112,7 @@ namespace MutantTrivia.Controllers
             context.SaveChanges();
 
             return Redirect("/Questions");
-        }
+        }*/
 
         public IActionResult Edit(int id)
         {
@@ -135,7 +135,7 @@ namespace MutantTrivia.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(EditQuestionViewModel editQuestionViewModel)
+        public IActionResult Edit(EditQuestionViewModel editQuestionViewModel, bool deleteConfirmation = false)
         {
             if (ModelState.IsValid)
             {
@@ -145,13 +145,23 @@ namespace MutantTrivia.Controllers
                     return NotFound();
                 }
 
-                question.Name = editQuestionViewModel.Name;
-                question.Answer = editQuestionViewModel.Answer;
-                question.CategoryId = editQuestionViewModel.CategoryId;
+                if (deleteConfirmation)
+                {
+                    context.Questions.Remove(question);
+                    context.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                else
+                {
 
-                context.SaveChanges();
+                    question.Name = editQuestionViewModel.Name;
+                    question.Answer = editQuestionViewModel.Answer;
+                    question.CategoryId = editQuestionViewModel.CategoryId;
 
-                return RedirectToAction("Index");
+                    context.SaveChanges();
+
+                    return RedirectToAction("Index");
+                }
             }
 
             ViewBag.Categories = context.Categories.ToList();

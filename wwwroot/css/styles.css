@@ -13,6 +13,28 @@ body {
     color: ghostwhite;
 }
 
+button {
+    margin: 1rem;
+    
+}
+
+input {
+    margin: 1rem;
+    border-radius: 8px;
+    padding: 1rem;
+    
+}
+
+select {
+    border-radius: 8px;
+}
+
+textarea {
+    border-radius: 15px;
+    font-size:larger;
+}
+
+
 
 
 /* Styling for Titles */

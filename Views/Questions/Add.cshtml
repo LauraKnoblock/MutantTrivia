@@ -17,7 +17,7 @@
     <div class="form-group">
        <label asp-for="Name">
            Question
-           <input asp-for="Name" type="text" />
+           <textarea class="form-control" asp-for="Name" type="text"> </textarea>
        </label>
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
@@ -25,8 +25,8 @@
 
        <label asp-for="Answer">
            Answer
-           <input type="text" asp-for="Answer" />
-       </label>
+<textarea class="form-control" asp-for="Answer"></textarea>
+        </label>
         <span asp-validation-for="Answer" class="text-danger"></span>
     </div>
     

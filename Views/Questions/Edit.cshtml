@@ -6,12 +6,12 @@
     <input type="hidden" asp-for="Id" />
     <div class="form-group">
         <label asp-for="Name">Question:</label>
-        <input type="text" class="form-control" asp-for="Name" />
+        <textarea type="text" class="form-control" asp-for="Name" ></textarea>
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="Answer">Answer:</label>
-        <input type="text" class="form-control" asp-for="Answer" />
+<textarea class="form-control" asp-for="Answer"></textarea>
         <span asp-validation-for="Answer" class="text-danger"></span>
     </div>
     <div class="form-group">
@@ -25,4 +25,6 @@
         </select>
     </div>
     <button type="submit" class="btn btn-primary">Save</button>
+    <button type="submit" class="btn btn-danger" name="deleteConfirmation" value="true" onclick="return confirm('Are you sure you want to delete this question?')">Delete Question</button>
+
 </form>

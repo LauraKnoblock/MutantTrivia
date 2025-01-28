@@ -14,6 +14,16 @@ public class QuizViewModel
     public string? FeedbackMessage { get; set; }
     public bool IsComplete { get; set; }
     public QuizSearchModel SearchModel { get; set; } = new QuizSearchModel();
+
+    public List<AnsweredQuestion> AnsweredQuestions { get; set; } = new List<AnsweredQuestion>();
+
+    public class AnsweredQuestion
+    {
+        public string? QuestionText { get; set; }
+        public string? UserAnswer { get; set; }
+        public string? CorrectAnswer { get; set; }
+        public bool IsCorrect { get; set; }
+    }
 }
 
 public class QuizSearchModel

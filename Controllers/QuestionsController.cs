@@ -4,6 +4,10 @@ using MutantTrivia.Data;
 using MutantTrivia.Models;
 using MutantTrivia.ViewModels;
 using FuzzySharp;
+using static QuizViewModel;
+using Microsoft.AspNetCore.Http;
+using MutantTrivia.Extensions;
+
 
 namespace MutantTrivia.Controllers
 {
@@ -92,27 +96,6 @@ namespace MutantTrivia.Controllers
             return View(addQuestionViewModel);
         }
 
-      /*  [HttpGet]
-        public IActionResult Delete()
-        {
-            ViewBag.questions = context.Questions.ToList();
-
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Delete(int[] questionIds)
-        {
-            foreach (int questionId in questionIds)
-            {
-                Question? theQuestion = context.Questions.Find(questionId);
-                context.Questions.Remove(theQuestion);
-            }
-
-            context.SaveChanges();
-
-            return Redirect("/Questions");
-        }*/
 
         public IActionResult Edit(int id)
         {
@@ -172,11 +155,6 @@ namespace MutantTrivia.Controllers
         {
 
             var totalQuestions = context.Questions.Count();
-            if (totalQuestions == 0)
-            {
-                TempData["Error"] = "No questions available.";
-                return RedirectToAction("Index");
-            }
 
             var model = new QuizViewModel
             {
@@ -245,11 +223,31 @@ namespace MutantTrivia.Controllers
                 HttpContext.Session.SetInt32("CorrectAnswersCount", currentCorrectAnswersCount);
             }
 
+
             // Track answered questions
             var answeredIds = HttpContext.Session.GetString("AnsweredQuestionIds")?.Split(',')
                 .Select(int.Parse).ToList() ?? new List<int>();
             answeredIds.Add(model.QuestionId);
             HttpContext.Session.SetString("AnsweredQuestionIds", string.Join(",", answeredIds));
+
+            // Retrieve the existing answered questions list from the session
+            var answeredQuestions = HttpContext.Session.Get<List<AnsweredQuestion>>("AnsweredQuestions") ?? new List<AnsweredQuestion>();
+
+            // Add the current question to the answered questions list
+            var answeredQuestion = new AnsweredQuestion
+            {
+                QuestionText = question.Name,  // Replace with your question's text property
+                UserAnswer = model.UserAnswer,
+                CorrectAnswer = question.Answer,
+                IsCorrect = isCorrect
+            };
+            answeredQuestions.Add(answeredQuestion);
+
+            // Save the updated list back to the Session
+            HttpContext.Session.Set("AnsweredQuestions", answeredQuestions);
+
+            // Assign it to the model for display
+            model.AnsweredQuestions = answeredQuestions;
 
             // Check if quiz is complete
             if (answeredIds.Count >= model.SelectedQuestionCount)
@@ -260,6 +258,7 @@ namespace MutantTrivia.Controllers
                     CorrectAnswersCount = currentCorrectAnswersCount,
                     SelectedQuestionCount = model.SelectedQuestionCount,
                     TotalQuestionsCount = model.TotalQuestionsCount,
+                    AnsweredQuestions = model.AnsweredQuestions,
                     FeedbackMessage = $"Congratulations! You've completed the quiz! You got {currentCorrectAnswersCount} out of {model.SelectedQuestionCount} questions correct!"
                 };
                 return View(completionModel);

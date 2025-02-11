@@ -16,8 +16,8 @@ namespace MutantTrivia.ViewModels
         [StringLength(50, MinimumLength = 1, ErrorMessage = "Answer must be between 1-50 characters long.")]
         public string Answer { get; set; }
 
-        public QuestionType Type { get; set; } // Consider removing if not relevant for editing
-
+/*        public QuestionType Type { get; set; } // Consider removing if not relevant for editing
+*/
         [Required(ErrorMessage = "Category is required")]
         public int CategoryId { get; set; }
         public List<SelectListItem>? Categories { get; set; } // Optional if categories are not editable

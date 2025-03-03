@@ -168,15 +168,16 @@ namespace MutantTrivia.Controllers
         {
             var totalQuestions = context.Questions.Count();
 
-            // Validate selected count
+            // validate selected count
             if (selectedQuestionCount <= 0 || selectedQuestionCount > totalQuestions)
             {
                 selectedQuestionCount = Math.Min(5, totalQuestions);
             }
 
-            // Reset session
+            // reset session- 
             HttpContext.Session.SetInt32("CorrectAnswersCount", 0);
             HttpContext.Session.Remove("AnsweredQuestionIds");
+            HttpContext.Session.Remove("AnsweredQuestions"); 
 
             var random = new Random();
             var randomSkip = random.Next(0, totalQuestions);
